@@ -37,6 +37,7 @@ public class GitHubLookupService {
         User results = restTemplate.getForObject(url, User.class);
         // Artifical delay of 1s for demonstration purposes
         Thread.sleep(1000L);
+        // get does not block
         return CompletableFuture.completedFuture(results);
     }
 

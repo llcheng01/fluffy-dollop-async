@@ -28,6 +28,7 @@ public class HomeController {
     public String home() {
         return "home";
     }
+
     // Exercise using curl http://localhost:8080/async?input=lorem,ipsum,dolor,sit,amet
     @RequestMapping(path = "async", method = RequestMethod.GET)
     public @ResponseBody Future<List<User>> get(@RequestParam List<String> input) throws Exception {
@@ -53,26 +54,20 @@ public class HomeController {
             futures.add(requestFuture);
         }
 
-        // Completed output
-//        CompletableFuture<String> output = new CompletableFuture<>();
-
-        // Kick off multiple, asynchronous lookups
-//        CompletableFuture<User> blog1 = gitHubLookupService.findUser("PivotalSoftware");
-//        CompletableFuture<User> blog2 = gitHubLookupService.findUser("CloudFoundry");
-//        CompletableFuture<User> blog3 = gitHubLookupService.findUser("Spring-Project");
-
-        // Wait until they are all done
-        // CompletableFuture<Void> jobsDone = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
-
         // Print results, including elapsed time
         logger.info("Elapsed time: " + (System.currentTimeMillis() - start));
-//        logger.info("--> " + blog3.get());
-//        logger.info("--> " + blog2.get());
-//        logger.info("--> " + blog1.get());
-
         return sequence(futures);
     }
 
+    /**
+     * Convert from list of Futures like List<CompletableFuture<User>> to
+     * Future of list of users CompletableFuture<List<User>>
+     * Combine list of futures together
+     *
+     * @param futures
+     * @param <T>
+     * @return
+     */
     private static <T> CompletableFuture<List<T>> sequence(List<CompletableFuture<T>> futures) {
         CompletableFuture<Void> allDoneFuture =
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
